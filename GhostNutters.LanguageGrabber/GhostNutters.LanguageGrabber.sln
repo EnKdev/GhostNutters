@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GhostNutters.LanguageGrabber", "GhostNutters.LanguageGrabber\GhostNutters.LanguageGrabber.csproj", "{9521FB86-A06F-4B35-BCDE-B1634AEA8DE1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9521FB86-A06F-4B35-BCDE-B1634AEA8DE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9521FB86-A06F-4B35-BCDE-B1634AEA8DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9521FB86-A06F-4B35-BCDE-B1634AEA8DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9521FB86-A06F-4B35-BCDE-B1634AEA8DE1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
