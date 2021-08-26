@@ -4,6 +4,9 @@ Everything related to the GhostNutters Group
 ## Current Projects in this Repo:
 - GhostNutters.LanguageGrabber - A language grabber for the custom made language file named "GhostNutters" used in Ghost Hunters Corp.
 
+## Future Projects for this Repo:
+- GhostNutters.StatTrack - A statistics tracker for each member of the GhostNutters-Group
+
 ### Maintainers:
  - [EnKdev](https://github.com/enkdev)
 
