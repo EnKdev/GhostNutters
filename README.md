@@ -6,6 +6,11 @@ Everything related to the GhostNutters Group
 
 ## Future Projects for this Repo:
 - GhostNutters.StatTrack - A statistics tracker for each member of the GhostNutters-Group
+- GhostNutters.Obsideo - A probability calculator for the game Obsideo
+
+## In progress:
+- GhostNutters.StatTrack
+- GhostNutters.Obsideo
 
 ### Maintainers:
  - [EnKdev](https://github.com/enkdev)
