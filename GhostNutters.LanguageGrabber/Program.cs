@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Text.Json.Serialization;
+using Ionic.Zip;
 using Newtonsoft.Json;
 
 namespace GhostNutters.LanguageGrabber
@@ -13,7 +13,7 @@ namespace GhostNutters.LanguageGrabber
             Console.WriteLine("Select Language-Version: 1) Normal, 2) Beta Edition");
             char version = char.Parse(Console.ReadLine());
 
-            string _folderPath = "";
+            string[] _folderPaths = new string[] { };
             string _localVersion = "";
             string _betaVersion = "";
             string _serverVersion = "";
@@ -23,9 +23,9 @@ namespace GhostNutters.LanguageGrabber
                 case '1':
                     Console.WriteLine("Checking for version...");
 
-                    _folderPath = File.ReadAllText($"./path.txt");
+                    _folderPaths = File.ReadAllLines($"./path.txt");
 
-                    if (_folderPath != string.Empty)
+                    if (_folderPaths[0] != string.Empty && _folderPaths[1] != string.Empty)
                     {
                         using var wc = new WebClient();
 
@@ -48,32 +48,51 @@ namespace GhostNutters.LanguageGrabber
                         if (_localVersion != _serverVersion)
                         {
                             Console.Clear();
-                            Console.WriteLine("Grabbing new Language-File...");
+                            Console.WriteLine("Grabbing new Language-Files...");
 
-                            var serverFile =
-                                wc.DownloadString("https://enkdev.xyz/cdn/mods/ghc/ghostnutters/GhostNutters.json");
-                            using var fw = File.CreateText($"./File/GhostNutters.json");
-                            fw.Write(serverFile);
-                            fw.Dispose();
+                            var tempZip = new ZipFile();
+                            tempZip.Save($"./download/language.zip");
+
+                            wc.DownloadFile("https://enkdev.xyz/cdn/mods/ghc/ghostnutters/packages/GhostNutters.zip",
+                                $"./download/language.zip");
+
+                            var zip = ZipFile.Read($"./download/language.zip");
+
+                            foreach (var entry in zip)
+                                entry.Extract($"./language", ExtractExistingFileAction.OverwriteSilently);
+
+                            tempZip.Dispose();
+                            zip.Dispose();
+                            File.Delete($"./download/language.zip");
 
                             Console.Clear();
                             Console.WriteLine("Updating local version...");
 
-                            using var fw2 = File.CreateText("./localVersion.json");
-                            fw2.Write(ver);
-                            fw2.Dispose();
+                            using var fw = File.CreateText("./localVersion.json");
+                            fw.Write(ver);
+                            fw.Dispose();
 
                             Console.Clear();
                             Console.WriteLine("Moving Language-File to GHC's language directory...");
 
-                            if (File.Exists($"{_folderPath}/GhostNutters.json"))
+                            if (File.Exists($"{_folderPaths[0]}/GhostNutters.json"))
                             {
-                                File.Delete($"{_folderPath}/GhostNutters.json");
+                                File.Delete($"{_folderPaths[0]}/GhostNutters.json");
                             }
 
-                            File.Move($"./File/GhostNutters.json", $"{_folderPath}/GhostNutters.json");
-                            File.Delete($"./File/GhostNutters.json");
+                            File.Move($"./language/language/GhostNutters.json", $"{_folderPaths[0]}/GhostNutters.json");
+                            File.Delete($"./language/language/GhostNutters.json");
 
+                            Console.Clear();
+                            Console.WriteLine("Moving Vocal-File to GHC's language directory...");
+
+                            if (File.Exists($"{_folderPaths[1]}/GhostNutters.json"))
+                            {
+                                File.Delete($"{_folderPaths[1]}/GhostNutters.json");
+                            }
+
+                            File.Move($"./language/vocal/GhostNutters.json", $"{_folderPaths[1]}/GhostNutters.json");
+                            File.Delete($"./language/vocal/GhostNutters.json");
 
                             Console.Clear();
                             Console.WriteLine("Done");
@@ -88,16 +107,17 @@ namespace GhostNutters.LanguageGrabber
                     {
                         Console.Clear();
                         Console.WriteLine(
-                            "Your path to Ghost Hunters Corps language directory is not set. Please save it inside path.txt before running this app.");
+                            "Your path to Ghost Hunters Corps language and vocal directory is not set. Please save it inside path.txt before running this app.\n" +
+                            "If you need help: The first entry should be going to the language directory, the second to the vocal directory");
                     }
 
                     break;
                 case '2':
                     Console.WriteLine("Checking for version...");
 
-                    _folderPath = File.ReadAllText($"./path.txt");
+                    _folderPaths = File.ReadAllLines($"./path.txt");
 
-                    if (_folderPath != string.Empty)
+                    if (_folderPaths[0] != string.Empty && _folderPaths[1] != string.Empty)
                     {
                         using var wc = new WebClient();
 
@@ -106,7 +126,7 @@ namespace GhostNutters.LanguageGrabber
 
                         if (c != null)
                         {
-                            _betaVersion = c.BetaVersion;
+                            _betaVersion = c.Version;
                         }
 
                         var ver = wc.DownloadString("https://enkdev.xyz/cdn/mods/ghc/ghostnutters/languageFile.json");
@@ -114,38 +134,57 @@ namespace GhostNutters.LanguageGrabber
 
                         if (content != null)
                         {
-                            _serverVersion = content.BetaVersion;
+                            _serverVersion = content.Version;
                         }
 
                         if (_betaVersion != _serverVersion)
                         {
                             Console.Clear();
-                            Console.WriteLine("Grabbing new Language-File...");
+                            Console.WriteLine("Grabbing new Language-Files...");
 
-                            var serverFile =
-                                wc.DownloadString("https://enkdev.xyz/cdn/mods/ghc/ghostnutters/GhostNuttersBetaEdition.json");
-                            using var fw = File.CreateText($"./File/GhostNuttersBetaEdition.json");
-                            fw.Write(serverFile);
-                            fw.Dispose();
+                            var tempZip = new ZipFile();
+                            tempZip.Save($"./download/language.zip");
+
+                            wc.DownloadFile("https://enkdev.xyz/cdn/mods/ghc/ghostnutters/packages/GhostNuttersBetaEdition.zip",
+                                $"./download/language.zip");
+
+                            var zip = ZipFile.Read($"./download/language.zip");
+
+                            foreach (var entry in zip)
+                                entry.Extract($"./language", ExtractExistingFileAction.OverwriteSilently);
+
+                            tempZip.Dispose();
+                            zip.Dispose();
+                            File.Delete($"./download/language.zip");
 
                             Console.Clear();
                             Console.WriteLine("Updating local version...");
 
-                            using var fw2 = File.CreateText("./localVersion.json");
-                            fw2.Write(ver);
-                            fw2.Dispose();
+                            using var fw = File.CreateText("./localVersion.json");
+                            fw.Write(ver);
+                            fw.Dispose();
 
                             Console.Clear();
                             Console.WriteLine("Moving Language-File to GHC's language directory...");
 
-                            if (File.Exists($"{_folderPath}/GhostNuttersBetaEdition.json"))
+                            if (File.Exists($"{_folderPaths[0]}/GhostNuttersBetaEdition.json"))
                             {
-                                File.Delete($"{_folderPath}/GhostNuttersBetaEdition.json");
+                                File.Delete($"{_folderPaths[0]}/GhostNuttersBetaEdition.json");
                             }
 
-                            File.Move($"./File/GhostNuttersBetaEdition.json", $"{_folderPath}/GhostNuttersBetaEdition.json");
-                            File.Delete($"./File/GhostNuttersBetaEdition.json");
+                            File.Move($"./language/language/GhostNuttersBetaEdition.json", $"{_folderPaths[0]}/GhostNuttersBetaEdition.json");
+                            File.Delete($"./language/language/GhostNuttersBetaEdition.json");
 
+                            Console.Clear();
+                            Console.WriteLine("Moving Vocal-File to GHC's language directory...");
+
+                            if (File.Exists($"{_folderPaths[1]}/GhostNuttersBetaEdition.json"))
+                            {
+                                File.Delete($"{_folderPaths[1]}/GhostNuttersBetaEdition.json");
+                            }
+
+                            File.Move($"./language/vocal/GhostNuttersBetaEdition.json", $"{_folderPaths[1]}/GhostNuttersBetaEdition.json");
+                            File.Delete($"./language/vocal/GhostNuttersBetaEdition.json");
 
                             Console.Clear();
                             Console.WriteLine("Done");
@@ -160,12 +199,13 @@ namespace GhostNutters.LanguageGrabber
                     {
                         Console.Clear();
                         Console.WriteLine(
-                            "Your path to Ghost Hunters Corps language directory is not set. Please save it inside path.txt before running this app.");
+                            "Your path to Ghost Hunters Corps language and vocal directory is not set. Please save it inside path.txt before running this app.\n" +
+                            "If you need help: The first entry should be going to the language directory, the second to the vocal directory");
                     }
 
                     break;
             }
-            
+
 
             Console.ReadKey();
         }
